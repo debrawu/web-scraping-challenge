@@ -15,14 +15,23 @@ mongo = PyMongo(app)
 @app.route('/')
 def index():
 
-    #find one record
     mars_info = mongo.db.mars_info.find_one()
-    return render_template('index.html', mars=mars_info)
+    return render_template('index.html', mars_info=mars_info)
 
+#trigger webscraping 
 @app.route('/scrape')
 def scrape():
-    mars_info = scrape_mars.scrape()
-    print(mars_info)
+
+    mars_info = mongo.db.mars_info
+    mars_data = scrape_mars.scrape()
+    mars_info.update({}, mars_data, upsert=True)
+
+     # Use Flask's redirect function to send us to a different route once this task has completed.
+    return redirect("/")
+
+  
+     
+  
     
 
 
